@@ -7,9 +7,10 @@
 //
 
 import UIKit
-import SceneKit
+
 import QuartzCore
 import SpriteKit
+import SceneKit
 
 class ViewController: UIViewController {
                             
@@ -19,7 +20,7 @@ class ViewController: UIViewController {
         
         // BEGIN scene_background_color
         let sceneView = self.view as! SCNView
-        sceneView.backgroundColor = UIColor.grayColor()                
+        sceneView.backgroundColor = UIColor.gray
         // END scene_background_color
 
         
@@ -63,7 +64,7 @@ class ViewController: UIViewController {
         
         // BEGIN ambient_light
         let ambientLight = SCNLight()
-        ambientLight.type = SCNLightTypeAmbient
+        ambientLight.type = SCNLight.LightType.ambient
         ambientLight.color = UIColor(white: 0.25, alpha: 1.0)
         
         let ambientLightNode = SCNNode()
@@ -78,7 +79,7 @@ class ViewController: UIViewController {
         
         // BEGIN omni_light
         let omniLight = SCNLight()
-        omniLight.type = SCNLightTypeOmni
+        omniLight.type = SCNLight.LightType.omni
         omniLight.color = UIColor(white: 1.0, alpha: 1.0)
         
         let omniLightNode = SCNNode()
@@ -95,8 +96,7 @@ class ViewController: UIViewController {
         let moveUpDownAnimation = CABasicAnimation(keyPath: "position")
         
         // Move 5 units on the y-axis (i.e., up)
-        moveUpDownAnimation.byValue =
-            NSValue(SCNVector3: SCNVector3(x: 0, y: 5, z: 0))
+        moveUpDownAnimation.byValue = NSValue.init(scnVector3: SCNVector3(x: 0, y: 5, z: 0))
         // Accelerate and decelerate at the ends, instead of 
         // mechanically bouncing
         moveUpDownAnimation.timingFunction =
@@ -122,7 +122,7 @@ class ViewController: UIViewController {
         let text = SCNText(string: "SceneKit!", extrusionDepth: 0.2)
         
         // text will be 2 units (meters) high
-        text.font = UIFont.systemFontOfSize(2)
+        text.font = UIFont.systemFont(ofSize: 2)
         let textNode = SCNNode(geometry: text)
         // Positioned slightly to the left, and above the
         // capsule (which is 10 units high)
@@ -137,10 +137,12 @@ class ViewController: UIViewController {
         // BEGIN text_rotation_animation
         // Rotate one full circle (2π) around the Y (up) axis
         let rotate = CABasicAnimation(keyPath: "eulerAngles")
-        rotate.byValue =
-            NSValue(SCNVector3: SCNVector3(x: Float(0.0),
-                                           y: Float(M_PI * 2.0),
-                                           z: Float(0.0)))
+        rotate.byValue = NSValue.init(scnVector3: SCNVector3(x: Float(0.0),
+                                                             y: Float(M_PI * 2.0),
+                                                             z: Float(0.0)))
+//            NSValue(SCNVector3: SCNVector3(x: Float(0.0),
+//                                           y: Float(M_PI * 2.0),
+//                                           z: Float(0.0)))
         
         // Do it forever
         rotate.repeatCount = Float.infinity
@@ -157,8 +159,8 @@ class ViewController: UIViewController {
         
         // BEGIN capsule_material
         let redMetallicMaterial = SCNMaterial()
-        redMetallicMaterial.diffuse.contents = UIColor.redColor()
-        redMetallicMaterial.specular.contents = UIColor.whiteColor()
+        redMetallicMaterial.diffuse.contents = UIColor.red
+        redMetallicMaterial.specular.contents = UIColor.white
         redMetallicMaterial.shininess = 1.0
         capsule.materials = [redMetallicMaterial]
         // END capsule_material
@@ -182,7 +184,7 @@ class ViewController: UIViewController {
         // Normal mapping
         // BEGIN normal_map_texture_gen
         let noiseNormalMapTexture =
-            noiseTexture.textureByGeneratingNormalMapWithSmoothness(0.1,
+            noiseTexture.generatingNormalMap(withSmoothness: 0.1,
                 contrast: 1.0)
         // END normal_map_texture_gen
         
@@ -202,9 +204,9 @@ class ViewController: UIViewController {
         
         // BEGIN tap_recognizer_setup
         let tapRecognizer
-            = UITapGestureRecognizer(target: self, action: "tapped:")
+            = UITapGestureRecognizer(target: self, action: Selector(("tapped:")))
         sceneView.addGestureRecognizer(tapRecognizer)
-        sceneView.userInteractionEnabled = true
+        sceneView.isUserInteractionEnabled = true
         // END tap_recognizer_setup
 
         
@@ -223,7 +225,7 @@ class ViewController: UIViewController {
         
         // When enabled, the constraint will try to rotate
         // around only a single axis
-        lookAtConstraint.gimbalLockEnabled = true
+        lookAtConstraint.isGimbalLockEnabled = true
         pointerNode.constraints = [lookAtConstraint]
         // END constraint_adding
         
@@ -234,9 +236,9 @@ class ViewController: UIViewController {
         // Loading Collada files
         // BEGIN collada_loading
         let critterDataURL =
-            NSBundle.mainBundle().URLForResource("Critter",
-                withExtension: "dae")
-        let critterData = SCNSceneSource(URL: critterDataURL!, options: nil)
+            Bundle.main.url(forResource: "Critter",withExtension: "dae")
+        let critterData = SCNSceneSource(url: critterDataURL!, options: nil)
+//        SCNSceneSource(URL: critterDataURL!, options: nil)
         // END collada_loading
         
         // We can now pull data out of this file
@@ -244,8 +246,7 @@ class ViewController: UIViewController {
         
         // BEGIN collada_adding
         // Find the node called 'Critter'; if it exists, add it
-        let critterNode = critterData?.entryWithIdentifier("Critter",
-            withClass: SCNNode.self) as? SCNNode
+        let critterNode = critterData?.entryWithIdentifier("Critter",withClass: SCNNode.self)
         if critterNode != nil {
             critterNode?.position = SCNVector3(x: 5, y: 0, z: 0)
             scene.rootNode.addChildNode(critterNode!)
@@ -266,7 +267,7 @@ class ViewController: UIViewController {
         
         // BEGIN physics_adding
         let critterPhysicsBody =
-            SCNPhysicsBody(type: SCNPhysicsBodyType.Dynamic,
+            SCNPhysicsBody(type: SCNPhysicsBodyType.dynamic,
                 shape: critterPhysicsShape)
         critterNode?.physicsBody = critterPhysicsBody
         // END physics_adding
@@ -279,7 +280,7 @@ class ViewController: UIViewController {
         scene.rootNode.addChildNode(floorNode)
         
         let floorPhysicsBody =
-            SCNPhysicsBody(type: SCNPhysicsBodyType.Static,
+            SCNPhysicsBody(type: SCNPhysicsBodyType.`static`,
                 shape: SCNPhysicsShape(geometry: floor, options: nil))
         floorNode.physicsBody = floorPhysicsBody
         // END floor
@@ -297,25 +298,25 @@ class ViewController: UIViewController {
     // BEGIN tap_handler
     func tapped(tapRecognizer: UITapGestureRecognizer) {           
         // If a tap has happened:
-        if tapRecognizer.state == UIGestureRecognizerState.Ended {
+        if tapRecognizer.state == UIGestureRecognizerState.ended {
         
             // Find the object that was tapped
             let sceneView = self.view as! SCNView
-            let hits = sceneView.hitTest(tapRecognizer.locationInView(
-                                         tapRecognizer.view),
-                                         options: nil) as! [SCNHitTestResult]
+            let hits = sceneView.hitTest(tapRecognizer.location(
+                in: tapRecognizer.view),
+                                         options: nil)
         
             // Make all selected items highlight
             for hit in hits {
             
                 // Get the first material, if one exists
                 if let theMaterial =
-                    hit.node.geometry?.materials?[0] as? SCNMaterial {
+                    hit.node.geometry?.materials[0] {
                     // Animate from black to yellow
                     let highlightAnimation =
                         CABasicAnimation(keyPath: "contents")
-                    highlightAnimation.fromValue = UIColor.blackColor()
-                    highlightAnimation.toValue = UIColor.yellowColor()
+                    highlightAnimation.fromValue = UIColor.black
+                    highlightAnimation.toValue = UIColor.yellow
                     highlightAnimation.autoreverses = true
                     highlightAnimation.repeatCount = 0
                     highlightAnimation.duration = 0.3

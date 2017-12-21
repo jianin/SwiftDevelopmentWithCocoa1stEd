@@ -35,7 +35,7 @@
       location = "group:SpeechSynthesizer/SpeechSynthesizer.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:SceneKit/SceneKit.xcodeproj">
+      location = "group:/Users/user/Documents/usiege/SwiftDevelopmentWithCocoa1stEd/iOS/SceneKit/SceneKitDemo.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:SpriteKit/SpriteKit.xcodeproj">
